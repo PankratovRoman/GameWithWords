@@ -4,14 +4,16 @@ namespace GameWithWords
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
             Console.WriteLine("Введите набор букв: ");
             string enteredChars = Console.ReadLine();
             while (true)
                 try
                 {
-                    ReadLine(enteredChars);
+                    Console.WriteLine("Введите искомое слово: ");
+                    string enteredWord = Console.ReadLine();
+                    ReadLine(enteredChars, enteredWord);
                 }
                 catch (Exception e)
                 {
@@ -20,25 +22,24 @@ namespace GameWithWords
 
         }
 
-        static void ReadLine(string enteredChars)
+        static void ReadLine(string enteredChars, string enteredWord)
         {
-            Console.WriteLine("Введите искомое слово: ");
-            string enteredWord = Console.ReadLine();
-
+            var originalEnterChars = enteredChars;
             for (var i = 0; i < enteredWord.Length; i++)
             {
                 if (!enteredChars.Contains(enteredWord[i]))
                 {
-                    throw new Exception($"Слова \"{enteredWord}\" нет в строке");
-
+                    throw new Exception($"Слова [{enteredWord}] нет в строке из символов [{originalEnterChars}].");
                 }
+                enteredChars = enteredChars.Replace(enteredWord[i].ToString(), "");
+                Console.WriteLine($"Остаток от массива {enteredChars}");
             }
-            Console.WriteLine("Слово [{0}] содержатся в строке из симовлов.", enteredWord);
-
+            Console.WriteLine($"Слово [{enteredWord}] содержится в строке из символов [{originalEnterChars}].");
         }
     }
 }
 
+// https://habr.com/ru/post/444594/ прочесть
 
 //у тебя есть алфавит русских букв.
 //ты случайным образом создаешь комбинацию из букв заданной длины (допустим 10). Буквы могут повторяться.
