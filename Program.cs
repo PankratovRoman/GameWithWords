@@ -8,17 +8,24 @@ namespace GameWithWords
     {
         static void Main()
         {
-            Console.WriteLine("Введите набор букв: ");
-            string enteredChars = Console.ReadLine();
-            //string[] words = File.ReadAllLines(@"C:\Users\f0611312\Desktop\ПРОЕКТ ИКС\russian_nouns.txt");
-            //SearchingWordsFromFile(enteredChars, words);
-
-            while (true)
+            string alphabetChars = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
+            
+            foreach (var el in alphabetChars)
             {
-                Console.WriteLine("Введите искомое слово: ");
-                string enteredWord = Console.ReadLine();
-                ReadLine(enteredChars, enteredWord);
+                Alphabet el = new Alphabet(el.ToString, 1);
             }
+
+            //Console.WriteLine("Введите набор букв: ");
+            //string enteredChars = Console.ReadLine();
+            ////string[] words = File.ReadAllLines(@"C:\Users\f0611312\Desktop\ПРОЕКТ ИКС\russian_nouns.txt");
+            ////SearchingWordsFromFile(enteredChars, words);
+
+            //while (true)
+            //{
+            //    Console.WriteLine("Введите искомое слово: ");
+            //    string enteredWord = Console.ReadLine();
+            //    ReadLine(enteredChars, enteredWord);
+            //}
 
 
         }
@@ -39,29 +46,20 @@ namespace GameWithWords
 
         static void ReadLine(string enteredChars, string enteredWord)
         {
-            bool[] forSortArray = new bool[enteredChars.Length];
-            foreach (var el in forSortArray) Console.Write($"{el} ");
-            Console.WriteLine();
-
+            var originalEnteredChars = enteredChars;
             for (var i = 0; i < enteredWord.Length; i++)
             {
                 if (!enteredChars.Contains(enteredWord[i]))
                 {
-                    Console.WriteLine($"Слова [{enteredWord}] нет в строке из символов [{enteredChars}].");
-                  
+                    Console.WriteLine($"Слова [{enteredWord}] нет в строке из символов [{originalEnteredChars}].");
                 }
                 else
                 {
                     var indexForSortArray = Array.IndexOf(enteredChars.ToCharArray(), enteredWord[i]);
-                    forSortArray[indexForSortArray] = true;
-                    foreach (var el in forSortArray) Console.Write($"{el} ");
-                    Console.WriteLine($"{indexForSortArray} ");
-
+                    enteredChars = enteredChars.Remove(indexForSortArray, 1);
                 }
             }
-            
-            //foreach (var el in forSortArray) Console.Write($"{el} ");
-            //Console.WriteLine();
+
         }
     }
 }
