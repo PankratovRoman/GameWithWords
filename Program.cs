@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 
 namespace GameWithWords
 {
@@ -8,33 +10,58 @@ namespace GameWithWords
         {
             Console.WriteLine("Введите набор букв: ");
             string enteredChars = Console.ReadLine();
+            //string[] words = File.ReadAllLines(@"C:\Users\f0611312\Desktop\ПРОЕКТ ИКС\russian_nouns.txt");
+            //SearchingWordsFromFile(enteredChars, words);
+
             while (true)
-                try
+            {
+                Console.WriteLine("Введите искомое слово: ");
+                string enteredWord = Console.ReadLine();
+                ReadLine(enteredChars, enteredWord);
+            }
+
+
+        }
+
+        static void SearchingWordsFromFile(string enteredChars, string[] dictionary)
+        {
+            //List<bool> searshingBoolList = new List<bool>();
+            foreach (var character in enteredChars)
+            {
+                for (var i = 0; i < dictionary[i].Length; i++)
                 {
-                    Console.WriteLine("Введите искомое слово: ");
-                    string enteredWord = Console.ReadLine();
-                    ReadLine(enteredChars, enteredWord);
+                    Console.WriteLine(character);
+
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                }
+            }
 
         }
 
         static void ReadLine(string enteredChars, string enteredWord)
         {
-            var originalEnterChars = enteredChars;
+            bool[] forSortArray = new bool[enteredChars.Length];
+            foreach (var el in forSortArray) Console.Write($"{el} ");
+            Console.WriteLine();
+
             for (var i = 0; i < enteredWord.Length; i++)
             {
                 if (!enteredChars.Contains(enteredWord[i]))
                 {
-                    throw new Exception($"Слова [{enteredWord}] нет в строке из символов [{originalEnterChars}].");
+                    Console.WriteLine($"Слова [{enteredWord}] нет в строке из символов [{enteredChars}].");
+                  
                 }
-                enteredChars = enteredChars.Replace(enteredWord[i].ToString(), "");
-                Console.WriteLine($"Остаток от массива {enteredChars}");
+                else
+                {
+                    var indexForSortArray = Array.IndexOf(enteredChars.ToCharArray(), enteredWord[i]);
+                    forSortArray[indexForSortArray] = true;
+                    foreach (var el in forSortArray) Console.Write($"{el} ");
+                    Console.WriteLine($"{indexForSortArray} ");
+
+                }
             }
-            Console.WriteLine($"Слово [{enteredWord}] содержится в строке из символов [{originalEnterChars}].");
+            
+            //foreach (var el in forSortArray) Console.Write($"{el} ");
+            //Console.WriteLine();
         }
     }
 }
