@@ -6,90 +6,116 @@ namespace GameWithWords
 {
     class Program
     {
+        private static Random rnd = new Random();
         static void Main()
         {
-            string[] words = File.ReadAllLines(@"C:\Users\f0611312\Desktop\ПРОЕКТ ИКС\russian_nouns.txt");
+            string[] words = File.ReadAllLines(@"russian_nouns.txt");
             var enteredChars = GetRandomBaseString();
             Console.WriteLine($"Рандом ввел: {enteredChars}");
-            //Console.WriteLine("Введите набор букв: ");
-            //string enteredChars = Console.ReadLine();
-            
-            //SearchingWordsFromFile(enteredChars, words);
+            var expectedWords = SearchingWordsFromFile(enteredChars, words);
+            Console.WriteLine($"Из словаря найдено слов: [{expectedWords.Count}].");
             while (true)
             {
                 try
                 {
                     Console.WriteLine("Введите искомое слово: ");
-                    string enteredWord = Console.ReadLine();
-                    ReadLine(enteredChars, enteredWord);
+                    string enteredWord = Console.ReadLine().Trim();
+                    if (enteredWord == "покажи")
+                    {
+                        Console.WriteLine($"{string.Join(", ", expectedWords)}");
+                        continue;
+                    }
+                    if (enteredWord == "выход")
+                    {
+                        Console.WriteLine($"Пошшшшшшшел ты!");
+                        break;
+                    }
+                    if (ReadLine(enteredChars, enteredWord))
+                    {
+                        Console.WriteLine($"Слово [{enteredWord}] найдено в строке из символов [{enteredChars}].");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Слова [{enteredWord}] нет в строке из символов [{enteredChars}].");
+                    }
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e.Message);
                 }
             }
-
         }
+
 
         static string GetRandomBaseString()
         {
-            string[] alphabetCharsHighPriority = { "о", "е", "а", "и", "н", "т" };
-            string[] alphabetCharsMediumPriority = { "с", "р", "в", "л", "к", "м", "д", "п", "у", "я" };
-            string[] alphabetCharsLowPriority = { "ы", "ь", "г", "д", "з", "б", "ч", "й", "х", "ж", "ш", "ю", "ц", "щ", "э", "ф", "ъ", "ё" };
+            char[] alphabetCharsHighPriority = { 'о', 'е', 'а', 'и', 'н', 'т' };
+            char[] alphabetCharsMediumPriority = { 'с', 'р', 'в', 'л', 'к', 'м', 'д', 'п', 'у', 'я' };
+            char[] alphabetCharsLowPriority = { 'ы', 'ь', 'г', 'д', 'з', 'б', 'ч', 'й', 'х', 'ж', 'ш', 'ю', 'ц', 'щ', 'э', 'ф', 'ъ', 'ё' };
             string baseString = "";
-            Random rnd = new Random();
 
-            for (var el = 0; el < 5; el++)
+            //вот тут можно впилить сложность
+            for (var i = 0; i < 20; i++)
             {
-                int rndValue = rnd.Next(0, 5);
-                char rndChar = char.Parse(alphabetCharsHighPriority[rndValue]);
+                var selectRarity = rnd.Next(10);
+                char[] subset;
+
+                switch (selectRarity)
+                {
+                    case 0:
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        subset = alphabetCharsHighPriority;
+                        break;
+                    case 5:
+                    case 6:
+                    case 7:
+                        subset = alphabetCharsMediumPriority;
+                        break;
+                    default:
+                        subset = alphabetCharsLowPriority;
+                        break;
+                }
+                int rndValue = rnd.Next(0, subset.Length);
+                char rndChar = subset[rndValue];
                 baseString += rndChar;
+
             }
-            for (var el = 0; el < 3; el++)
-            {
-                int rndValue = rnd.Next(0, 9);
-                char rndChar = char.Parse(alphabetCharsMediumPriority[rndValue]);
-                baseString += rndChar;
-            }
-            for (var el = 0; el < 2; el++)
-            {
-                int rndValue = rnd.Next(0, 17);
-                char rndChar = char.Parse(alphabetCharsLowPriority[rndValue]);
-                baseString += rndChar;
-            }
+
             return baseString;
         }
 
-        static void SearchingWordsFromFile(string enteredChars, string[] dictionary)
+        static HashSet<string> SearchingWordsFromFile(string enteredChars, string[] dictionary)
         {
-            //List<bool> searshingBoolList = new List<bool>();
-            foreach (var character in enteredChars)
+            var result = new HashSet<string>();
+            foreach (string word in dictionary)
             {
-                for (var i = 0; i < dictionary[i].Length; i++)
-                {
-                    Console.WriteLine(character);
-
-                }
+                if (!ReadLine(enteredChars, word))
+                    continue;
+                result.Add(word);
             }
-
+            return result;
         }
 
-        static void ReadLine(string enteredChars, string enteredWord)
+        static bool ReadLine(string enteredChars, string enteredWord)
         {
-            var originalEnteredChars = enteredChars;
-
+            //var originalEnteredChars = enteredChars;
+            if (string.IsNullOrWhiteSpace(enteredWord)) return false;
             for (var i = 0; i < enteredWord.Length; i++)
             {
                 if (!enteredChars.Contains(enteredWord[i]))
                 {
-                    throw new Exception($"Слова [{enteredWord}] нет в строке из символов [{originalEnteredChars}].");
+                    return false;
+                    //throw new Exception($"Слова [{enteredWord}] нет в строке из символов [{originalEnteredChars}].");
                 }
 
                 var indexForSortArray = Array.IndexOf(enteredChars.ToCharArray(), enteredWord[i]);
                 enteredChars = enteredChars.Remove(indexForSortArray, 1);
             }
-            Console.WriteLine($"Слово [{enteredWord}] найдено в строке из символов [{originalEnteredChars}].");
-
+            return true;
+            //Console.WriteLine($"Слово [{enteredWord}] найдено в строке из символов [{originalEnteredChars}].");
         }
     }
 }
@@ -132,5 +158,3 @@ namespace GameWithWords
 //Если положишь файл туда же, можешь указать просто File.ReadAllLines("words.txt");
 
 //работает и ..\..\words.txt ну кароч досовская хуйня
-
-//на всякий случай уточню - если в комбинации одна буква, а в слове ты используешь две таких буквы - это незачет
