@@ -8,26 +8,56 @@ namespace GameWithWords
     {
         static void Main()
         {
-            string alphabetChars = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя";
-            
-            foreach (var el in alphabetChars)
-            {
-                Alphabet el = new Alphabet(el.ToString, 1);
-            }
-
+            string[] words = File.ReadAllLines(@"C:\Users\f0611312\Desktop\ПРОЕКТ ИКС\russian_nouns.txt");
+            var enteredChars = GetRandomBaseString();
+            Console.WriteLine($"Рандом ввел: {enteredChars}");
             //Console.WriteLine("Введите набор букв: ");
             //string enteredChars = Console.ReadLine();
-            ////string[] words = File.ReadAllLines(@"C:\Users\f0611312\Desktop\ПРОЕКТ ИКС\russian_nouns.txt");
-            ////SearchingWordsFromFile(enteredChars, words);
+            
+            //SearchingWordsFromFile(enteredChars, words);
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("Введите искомое слово: ");
+                    string enteredWord = Console.ReadLine();
+                    ReadLine(enteredChars, enteredWord);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
+            }
 
-            //while (true)
-            //{
-            //    Console.WriteLine("Введите искомое слово: ");
-            //    string enteredWord = Console.ReadLine();
-            //    ReadLine(enteredChars, enteredWord);
-            //}
+        }
 
+        static string GetRandomBaseString()
+        {
+            string[] alphabetCharsHighPriority = { "о", "е", "а", "и", "н", "т" };
+            string[] alphabetCharsMediumPriority = { "с", "р", "в", "л", "к", "м", "д", "п", "у", "я" };
+            string[] alphabetCharsLowPriority = { "ы", "ь", "г", "д", "з", "б", "ч", "й", "х", "ж", "ш", "ю", "ц", "щ", "э", "ф", "ъ", "ё" };
+            string baseString = "";
+            Random rnd = new Random();
 
+            for (var el = 0; el < 5; el++)
+            {
+                int rndValue = rnd.Next(0, 5);
+                char rndChar = char.Parse(alphabetCharsHighPriority[rndValue]);
+                baseString += rndChar;
+            }
+            for (var el = 0; el < 3; el++)
+            {
+                int rndValue = rnd.Next(0, 9);
+                char rndChar = char.Parse(alphabetCharsMediumPriority[rndValue]);
+                baseString += rndChar;
+            }
+            for (var el = 0; el < 2; el++)
+            {
+                int rndValue = rnd.Next(0, 17);
+                char rndChar = char.Parse(alphabetCharsLowPriority[rndValue]);
+                baseString += rndChar;
+            }
+            return baseString;
         }
 
         static void SearchingWordsFromFile(string enteredChars, string[] dictionary)
@@ -47,18 +77,18 @@ namespace GameWithWords
         static void ReadLine(string enteredChars, string enteredWord)
         {
             var originalEnteredChars = enteredChars;
+
             for (var i = 0; i < enteredWord.Length; i++)
             {
                 if (!enteredChars.Contains(enteredWord[i]))
                 {
-                    Console.WriteLine($"Слова [{enteredWord}] нет в строке из символов [{originalEnteredChars}].");
+                    throw new Exception($"Слова [{enteredWord}] нет в строке из символов [{originalEnteredChars}].");
                 }
-                else
-                {
-                    var indexForSortArray = Array.IndexOf(enteredChars.ToCharArray(), enteredWord[i]);
-                    enteredChars = enteredChars.Remove(indexForSortArray, 1);
-                }
+
+                var indexForSortArray = Array.IndexOf(enteredChars.ToCharArray(), enteredWord[i]);
+                enteredChars = enteredChars.Remove(indexForSortArray, 1);
             }
+            Console.WriteLine($"Слово [{enteredWord}] найдено в строке из символов [{originalEnteredChars}].");
 
         }
     }

@@ -12,11 +12,9 @@ namespace GameWithWords
     }
     class Alphabet
     {
-        
-        char Letter
-        {
-            get;
-        }
+
+        char Letter;
+      
         int PriorityIndex;
 
         public Alphabet(char letter, int priorityIndex)
