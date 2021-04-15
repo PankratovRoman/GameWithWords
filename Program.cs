@@ -6,7 +6,7 @@ namespace GameWithWords
 {
     class Program
     {
-        private static Random rnd = new Random();
+        private static readonly Random rnd = new Random();
         static void Main()
         {
             string[] words = File.ReadAllLines(@"russian_nouns.txt");
@@ -14,6 +14,7 @@ namespace GameWithWords
             Console.WriteLine($"Рандом ввел: {enteredChars}");
             var expectedWords = SearchingWordsFromFile(enteredChars, words);
             Console.WriteLine($"Из словаря найдено слов: [{expectedWords.Count}].");
+            int bonus = 0;
             while (true)
             {
                 try
@@ -27,12 +28,32 @@ namespace GameWithWords
                     }
                     if (enteredWord == "выход")
                     {
-                        Console.WriteLine($"Пошшшшшшшел ты!");
+                        Console.WriteLine($"Ну и пошшшшшшшел ты!");
                         break;
                     }
                     if (ReadLine(enteredChars, enteredWord))
                     {
+                        bonus += enteredWord.Length;
                         Console.WriteLine($"Слово [{enteredWord}] найдено в строке из символов [{enteredChars}].");
+                        //напиши алгоритм, который будет менять окончания в след строке в зависимости от числа
+                        string wordEnding;
+
+                        var forNextSwitch = bonus % 100 / 10 != 1;
+                        switch (bonus%10)
+                        {
+                            case 1:
+                                wordEnding = forNextSwitch ? "о" : "ов";
+                                break;
+                            case 2: 
+                            case 3:
+                            case 4:
+                                wordEnding = forNextSwitch ? "а" : "ов";
+                                break;
+                            default:
+                                wordEnding = "ов";
+                                break;
+                        }
+                        Console.WriteLine($"У Вас {bonus} очк{wordEnding}.");
                     }
                     else
                     {
@@ -53,13 +74,11 @@ namespace GameWithWords
             char[] alphabetCharsMediumPriority = { 'с', 'р', 'в', 'л', 'к', 'м', 'д', 'п', 'у', 'я' };
             char[] alphabetCharsLowPriority = { 'ы', 'ь', 'г', 'д', 'з', 'б', 'ч', 'й', 'х', 'ж', 'ш', 'ю', 'ц', 'щ', 'э', 'ф', 'ъ', 'ё' };
             string baseString = "";
-
             //вот тут можно впилить сложность
-            for (var i = 0; i < 20; i++)
+            for (var i = 0; i < 10; i++)
             {
                 var selectRarity = rnd.Next(10);
                 char[] subset;
-
                 switch (selectRarity)
                 {
                     case 0:
@@ -81,9 +100,7 @@ namespace GameWithWords
                 int rndValue = rnd.Next(0, subset.Length);
                 char rndChar = subset[rndValue];
                 baseString += rndChar;
-
             }
-
             return baseString;
         }
 
@@ -101,21 +118,14 @@ namespace GameWithWords
 
         static bool ReadLine(string enteredChars, string enteredWord)
         {
-            //var originalEnteredChars = enteredChars;
             if (string.IsNullOrWhiteSpace(enteredWord)) return false;
             for (var i = 0; i < enteredWord.Length; i++)
             {
-                if (!enteredChars.Contains(enteredWord[i]))
-                {
-                    return false;
-                    //throw new Exception($"Слова [{enteredWord}] нет в строке из символов [{originalEnteredChars}].");
-                }
-
+                if (!enteredChars.Contains(enteredWord[i])) return false;
                 var indexForSortArray = Array.IndexOf(enteredChars.ToCharArray(), enteredWord[i]);
                 enteredChars = enteredChars.Remove(indexForSortArray, 1);
             }
             return true;
-            //Console.WriteLine($"Слово [{enteredWord}] найдено в строке из символов [{originalEnteredChars}].");
         }
     }
 }
